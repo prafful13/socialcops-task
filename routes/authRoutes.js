@@ -89,7 +89,7 @@ module.exports = app => {
     });
   });
 
-  app.get("/api/auth/logout", requireLogin, (req, res) => {
+  app.post("/api/auth/logout", requireLogin, (req, res) => {
     res.status(200).send({ auth: false, token: null });
   });
 };
