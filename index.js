@@ -18,7 +18,6 @@ if (process.env.NODE_ENV === "test") {
 } else {
   require("./services/dbconn");
 }
-require("./routes/userController")(app);
 require("./routes/authRoutes")(app);
 require("./routes/jsonpatch")(app);
 require("./routes/imgdown")(app);
