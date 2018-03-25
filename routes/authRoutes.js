@@ -1,3 +1,4 @@
+const async = require("async");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const keys = require("../config/keys");
@@ -5,44 +6,67 @@ const mongoose = require("mongoose");
 const requireLogin = require("../middlewares/requireLogin");
 const User = mongoose.model("users");
 
-module.exports = app => {
-  app.post("/api/auth/register", async (req, res) => {
-    var hashedPassword = bcrypt.hashSync(req.body.password, 8);
-
-    const existingUser = await User.findOne({ email: req.body.email });
-
-    if (existingUser) {
-      return res.send("User already exists");
-    } else {
-      User.create(
-        {
-          name: req.body.name,
-          email: req.body.email,
-          password: hashedPassword
-        },
-        (err, user) => {
-          if (err)
-            return res
-              .status(500)
-              .send("There was a problem registering the user.");
+createUser = function(body) {
+  return new Promise(async (resolve, reject) => {
+    var hashedPassword = bcrypt.hashSync(body.password, 8);
+    User.create(
+      {
+        name: body.name,
+        email: body.email,
+        password: hashedPassword
+      },
+      (error, user) => {
+        if (error) {
+          reject(error);
+        } else {
           // create a token
           var token = jwt.sign({ id: user._id }, keys.secret, {
-            expiresIn: 86400 // expires in 24 hours
+            expiresIn: 86400
           });
-          res.status(200).send({ auth: true, token: token });
+          resolve(token);
         }
-      );
-    }
+      }
+    );
   });
+};
 
-  app.get("/api/auth/me", requireLogin, (req, res) => {
-    User.findById(req.userId, { password: 0 }, (err, user) => {
-      if (err)
-        return res.status(500).send("There was a problem finding the user.");
-      if (!user) return res.status(404).send("No user found.");
+// checkUserWithEmail = function(body) {
+//   return new Promise((resolve, reject) => {
+//     var hashedPassword = bcrypt.hashSync(body.password, 8);
+//     User.find({ email: body.email }, function(err, existingUser) {
+//         if (err) {
+//           console.log("here", existingUser);
+//           reject(err);
+//         } else if (existingUser === []) {
+//           reject()
+//         }else {
+//           resolve(existingUser);
+//         }
+//     });
+//   })
+// }
 
-      res.status(200).send(user);
-    });
+module.exports = app => {
+  app.post("/api/auth/register", (req, res) => {
+    if (
+      req.body.hasOwnProperty("email") &&
+      req.body.hasOwnProperty("password") &&
+      req.body.hasOwnProperty("name")
+    ) {
+      createUser(req.body)
+        .then(token => {
+          res.status(200).json({
+            auth: true,
+            token: token
+          });
+        })
+        .catch(err => {
+          res.json({
+            auth: false,
+            err: err.message
+          });
+        });
+    }
   });
 
   app.post("/api/auth/login", (req, res) => {
@@ -69,4 +93,3 @@ module.exports = app => {
     res.status(200).send({ auth: false, token: null });
   });
 };
-``;
