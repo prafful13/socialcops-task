@@ -1,8 +1,19 @@
 # SocialCops Node Task
 
-Implemented 3 API Endpoints as asked and mocha test scripts for them. User authentication has been implemented using JSON Web Tokens. Have used MongoDB as the database to store user information. For JSON patching endpoint, I have used jsonpatch.js library. Have used Morgan library for Logging/Monitoring. Used prettifier atom plugin for ES6 linting.
+Implemented API Endpoints as asked and mocha test scripts for them. User authentication has been implemented using JSON Web Tokens. Have used MongoDB as the database to store user information. For JSON patching endpoint, I have used jsonpatch.js library. Have used Morgan library for Logging/Monitoring. Used prettifier atom plugin for ES6 linting.
 
 Project is live at: https://rocky-depths-18228.herokuapp.com/
+
+## Setup
+
+```
+git clone https://github.com/prafful13/socialcops-task.git
+cd socialcops-task
+npm install
+npm start
+```
+
+For testing, run: `npm test`
 
 ## API Endpoints
 

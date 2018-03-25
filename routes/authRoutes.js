@@ -30,22 +30,6 @@ createUser = function(body) {
   });
 };
 
-// checkUserWithEmail = function(body) {
-//   return new Promise((resolve, reject) => {
-//     var hashedPassword = bcrypt.hashSync(body.password, 8);
-//     User.find({ email: body.email }, function(err, existingUser) {
-//         if (err) {
-//           console.log("here", existingUser);
-//           reject(err);
-//         } else if (existingUser === []) {
-//           reject()
-//         }else {
-//           resolve(existingUser);
-//         }
-//     });
-//   })
-// }
-
 module.exports = app => {
   app.post("/api/auth/register", (req, res) => {
     if (
